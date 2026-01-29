@@ -5,43 +5,163 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link href="./css/style.css" rel="stylesheet">
-    <title>Document</title>
+    <title>My Professional Blog</title>
 </head>
 <body>
-    <header class="p-3 mb-3 border-bottom">
-        <div class="container"> 
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
-                <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg></a> 
-                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="index.html" class="nav-link px-2 link-secondary">Overview</a></li> 
-                    <li><a href="#about" class="nav-link px-2 link-body-emphasis">About</a></li> 
-                    <li><a href="#blogs" class="nav-link px-2 link-body-emphasis">Blogs</a></li> 
-                    <li><a href="#skills" class="nav-link px-2 link-body-emphasis">Skills</a></li> 
-                    <li><a href="#contact" class="nav-link px-2 link-body-emphasis">Contact</a></li> 
-                </ul> 
-                <button class="btn btn-light" id="darkModeToggle">
-                    <i class="fa-solid fa-moon" style="color: #FFD43B;"></i>
-                </button>
-                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search"> 
-                    <input type="search" class="form-control" placeholder="Search..." aria-label="Search"> 
-                </form> 
-                <div class="dropdown text-end"> 
-                    <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"> 
-                        <img src="./images/beshoy.png" alt="mdo" width="32" height="32" class="rounded-circle"> 
-                    </a> 
-                    <ul class="dropdown-menu text-small"> 
-                        <li><a class="dropdown-item" href="./html/newblog.html">New Blog...</a></li> 
-                        <li><a class="dropdown-item" href="./html/settings.html">Settings</a></li> 
-                        <li><a class="dropdown-item" href="./html/profile.html">Profile</a></li> 
-                        <li><hr class="dropdown-divider"></li> 
-                        <li><a class="dropdown-item" href="./html/login.html">Sign out</a></li> 
-                    </ul> 
-                </div> 
-            </div> 
-        </div> 
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <div class="container">
+            <a class="navbar-brand" href="/">My Blog</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <button class="btn btn-outline-secondary me-2" id="darkModeToggle">
+                            <i class="fa-solid fa-moon"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="./images/beshoy.png" alt="Profile" width="32" height="32" class="rounded-circle">
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="./html/newblog.html">New Post</a></li>
+                            <li><a class="dropdown-item" href="./html/profile.html">Profile</a></li>
+                            <li><a class="dropdown-item" href="./html/settings.html">Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="./html/login.html" id="logoutLink">Sign out</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-primary text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h1 class="display-4">Welcome to My Professional Blog</h1>
+                    <p class="lead">Sharing insights, tutorials, and thoughts on technology and development.</p>
+                </div>
+                <div class="col-lg-4">
+                    <img src="./images/beshoy.png" alt="Author" class="img-fluid rounded-circle">
+                </div>
+            </div>
+        </div>
     </header>
-    <h1 class="text-center">Welcome to My Portfolio</h1>
+
+    <main class="container my-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <section id="blogPosts">
+                    <h2 class="mb-4">Latest Posts</h2>
+                    <div id="postsContainer">
+                        <!-- Blog posts will be loaded here dynamically -->
+                    </div>
+                    <div class="text-center mt-4">
+                        <button id="loadMorePosts" class="btn btn-outline-primary">Load More Posts</button>
+                    </div>
+                </section>
+            </div>
+            <aside class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Search</h5>
+                    </div>
+                    <div class="card-body">
+                        <form class="d-flex">
+                            <input class="form-control me-2" type="search" placeholder="Search posts..." aria-label="Search" id="searchInput">
+                            <button class="btn btn-outline-success" type="submit">Search</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Categories</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-decoration-none">Technology</a></li>
+                            <li><a href="#" class="text-decoration-none">Web Development</a></li>
+                            <li><a href="#" class="text-decoration-none">Tutorials</a></li>
+                            <li><a href="#" class="text-decoration-none">Personal</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">About Me</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Hi, I'm Beshoy, a passionate developer sharing my journey and knowledge through this blog.</p>
+                        <a href="#about" class="btn btn-sm btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <section id="about" class="bg-light py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">About Me</h2>
+            <div class="row">
+                <div class="col-lg-6">
+                    <h3>My Journey</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                </div>
+                <div class="col-lg-6">
+                    <h3>Skills</h3>
+                    <ul>
+                        <li>Web Development</li>
+                        <li>JavaScript</li>
+                        <li>Node.js</li>
+                        <li>React</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Contact Me</h2>
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <form>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p>&copy; 2023 My Professional Blog. All rights reserved.</p>
+        </div>
+    </footer>
 <script src="https://kit.fontawesome.com/196d8a7ae6.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 <script src="./js/script.js"></script>

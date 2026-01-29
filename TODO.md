@@ -14,11 +14,11 @@
 - [x] Add blog post display functionality
 
 ## Frontend Updates
-- [ ] Update index.html to display blog posts dynamically
-- [ ] Integrate login.html with backend authentication
-- [ ] Update settings.html if needed for blog settings
-- [ ] Add JavaScript for API interactions (fetch blog posts, handle login)
-- [ ] Ensure dark mode works with new elements
+- [x] Update index.html to display blog posts dynamically
+- [x] Integrate login.html with backend authentication
+- [x] Update settings.html if needed for blog settings
+- [x] Add JavaScript for API interactions (fetch blog posts, handle login)
+- [x] Ensure dark mode works with new elements
 
 ## Security and Testing
 - [x] Sanitize all user inputs to prevent XSS and SQL injection
