@@ -1,154 +1,264 @@
 // Blog functionality and dark mode toggle
 document.addEventListener('DOMContentLoaded', function() {
+    let currentPage = 1;
+    let currentSearch = '';
+    let currentUser = null;
+
+    // Check authentication status
+    checkAuthStatus();
+
     // Dark mode toggle functionality
     const darkModeToggle = document.getElementById('darkModeToggle');
-    const htmlElement = document.documentElement;
-    const icon = darkModeToggle.querySelector('i');
+    if (darkModeToggle) {
+        const htmlElement = document.documentElement;
+        const icon = darkModeToggle.querySelector('i');
 
-    function setDarkMode(isDark) {
-        if (isDark) {
-            htmlElement.setAttribute('data-bs-theme', 'dark');
-            icon.className = 'fa-solid fa-sun';
-            localStorage.setItem('darkMode', 'true');
+        // Function to set dark mode
+        function setDarkMode(isDark) {
+            if (isDark) {
+                htmlElement.setAttribute('data-bs-theme', 'dark');
+                icon.className = 'fa-solid fa-sun';
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                htmlElement.removeAttribute('data-bs-theme');
+                icon.className = 'fa-solid fa-moon';
+                localStorage.setItem('darkMode', 'false');
+            }
+        }
+
+        // Load saved preference
+        const savedDarkMode = localStorage.getItem('darkMode');
+        if (savedDarkMode === 'true') {
+            setDarkMode(true);
         } else {
-            htmlElement.removeAttribute('data-bs-theme');
-            icon.className = 'fa-solid fa-moon';
-            localStorage.setItem('darkMode', 'false');
+            setDarkMode(false);
+        }
+
+        // Toggle on button click
+        darkModeToggle.addEventListener('click', function() {
+            const isDark = htmlElement.getAttribute('data-bs-theme') === 'dark';
+            setDarkMode(!isDark);
+        });
+    }
+
+    // Load posts
+    loadPosts();
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+
+    if (searchInput && searchButton) {
+        searchButton.addEventListener('click', function() {
+            currentSearch = searchInput.value.trim();
+            currentPage = 1;
+            loadPosts();
+        });
+
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                currentSearch = searchInput.value.trim();
+                currentPage = 1;
+                loadPosts();
+            }
+        });
+    }
+
+    // Logout functionality
+    const logoutLink = document.getElementById('logoutLink');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            logout();
+        });
+    }
+
+    // Contact form
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Handle contact form submission
+            alert('Thank you for your message! I will get back to you soon.');
+            contactForm.reset();
+        });
+    }
+
+    async function checkAuthStatus() {
+        try {
+            const response = await fetch('/api/user');
+            if (response.ok) {
+                const user = await response.json();
+                currentUser = user;
+                showUserMenu();
+            } else {
+                showLoginMenu();
+            }
+        } catch (error) {
+            console.error('Error checking auth status:', error);
+            showLoginMenu();
         }
     }
 
-    // Load saved preference
-    const savedDarkMode = localStorage.getItem('darkMode');
-    if (savedDarkMode === 'true') {
-        setDarkMode(true);
-    } else {
-        setDarkMode(false);
+    function showUserMenu() {
+        const userMenu = document.getElementById('userMenu');
+        const loginMenu = document.getElementById('loginMenu');
+        if (userMenu) userMenu.classList.remove('d-none');
+        if (loginMenu) loginMenu.classList.add('d-none');
     }
 
-    // Toggle on button click
-    darkModeToggle.addEventListener('click', function() {
-        const isDark = htmlElement.getAttribute('data-bs-theme') === 'dark';
-        setDarkMode(!isDark);
-    });
+    function showLoginMenu() {
+        const userMenu = document.getElementById('userMenu');
+        const loginMenu = document.getElementById('loginMenu');
+        if (userMenu) userMenu.classList.add('d-none');
+        if (loginMenu) loginMenu.classList.remove('d-none');
+    }
 
-    // Blog functionality
-    let currentPage = 1;
-    const postsPerPage = 5;
-
-    async function fetchPosts(page = 1) {
+    async function loadPosts() {
         try {
-            const response = await fetch(`/api/posts?page=${page}&limit=${postsPerPage}`);
+            const response = await fetch(`/api/posts?page=${currentPage}&search=${encodeURIComponent(currentSearch)}`);
             if (response.ok) {
-                const posts = await response.json();
-                displayPosts(posts);
+                const data = await response.json();
+                displayPosts(data.posts);
+                displayPagination(data.pagination);
+                displayRecentPosts(data.posts.slice(0, 5));
             } else {
-                console.error('Failed to fetch posts');
+                console.error('Error loading posts:', response.statusText);
             }
         } catch (error) {
-            console.error('Error fetching posts:', error);
+            console.error('Error loading posts:', error);
         }
     }
 
     function displayPosts(posts) {
         const container = document.getElementById('postsContainer');
-        if (posts.length === 0 && currentPage === 1) {
-            container.innerHTML = '<p class="text-muted">No blog posts yet. Check back soon!</p>';
+        if (!container) return;
+
+        if (posts.length === 0) {
+            container.innerHTML = '<div class="alert alert-info">No posts found.</div>';
             return;
         }
 
-        posts.forEach(post => {
-            const postElement = createPostElement(post);
-            container.appendChild(postElement);
-        });
-    }
-
-    function createPostElement(post) {
-        const postDiv = document.createElement('article');
-        postDiv.className = 'card mb-4';
-        postDiv.innerHTML = `
-            <div class="card-body">
-                <h3 class="card-title">${post.title}</h3>
-                <p class="card-text">${post.content.substring(0, 200)}${post.content.length > 200 ? '...' : ''}</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">By ${post.username} on ${new Date(post.created_at).toLocaleDateString()}</small>
-                    <a href="#" class="btn btn-sm btn-outline-primary">Read More</a>
+        container.innerHTML = posts.map(post => `
+            <article class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title h4">${escapeHtml(post.title)}</h2>
+                    <p class="card-text text-muted small">
+                        By ${escapeHtml(post.author)} on ${new Date(post.created_at).toLocaleDateString()}
+                    </p>
+                    <p class="card-text">${truncateText(escapeHtml(post.content), 200)}</p>
+                    <a href="#" class="btn btn-primary btn-sm" onclick="viewPost(${post.id})">Read More</a>
+                    ${currentUser && currentUser.userId === post.author_id ? `
+                        <button class="btn btn-outline-secondary btn-sm ms-2" onclick="editPost(${post.id})">Edit</button>
+                        <button class="btn btn-outline-danger btn-sm ms-2" onclick="deletePost(${post.id})">Delete</button>
+                    ` : ''}
                 </div>
-            </div>
-        `;
-        return postDiv;
+            </article>
+        `).join('');
     }
 
-    // Load more posts
-    const loadMoreBtn = document.getElementById('loadMorePosts');
-    if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', function() {
-            currentPage++;
-            fetchPosts(currentPage);
-        });
-    }
+    function displayPagination(pagination) {
+        const container = document.getElementById('paginationContainer');
+        if (!container) return;
 
-    // Search functionality
-    const searchForm = document.querySelector('form.d-flex');
-    if (searchForm) {
-        searchForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const searchTerm = document.getElementById('searchInput').value;
-            searchPosts(searchTerm);
-        });
-    }
-
-    async function searchPosts(term) {
-        try {
-            const response = await fetch(`/api/posts/search?q=${encodeURIComponent(term)}`);
-            if (response.ok) {
-                const posts = await response.json();
-                document.getElementById('postsContainer').innerHTML = '';
-                displayPosts(posts);
-            }
-        } catch (error) {
-            console.error('Error searching posts:', error);
+        const { page, pages } = pagination;
+        if (pages <= 1) {
+            container.innerHTML = '';
+            return;
         }
+
+        let paginationHtml = '<nav><ul class="pagination">';
+
+        // Previous button
+        paginationHtml += `<li class="page-item ${page === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${page - 1})">Previous</a>
+        </li>`;
+
+        // Page numbers
+        for (let i = Math.max(1, page - 2); i <= Math.min(pages, page + 2); i++) {
+            paginationHtml += `<li class="page-item ${i === page ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+            </li>`;
+        }
+
+        // Next button
+        paginationHtml += `<li class="page-item ${page === pages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${page + 1})">Next</a>
+        </li>`;
+
+        paginationHtml += '</ul></nav>';
+        container.innerHTML = paginationHtml;
     }
 
-    // Check authentication status
-    async function checkAuth() {
-        try {
-            const response = await fetch('/api/user');
-            if (response.ok) {
-                const user = await response.json();
-                updateUIForLoggedInUser(user);
-            } else {
-                updateUIForLoggedOutUser();
-            }
-        } catch (error) {
-            updateUIForLoggedOutUser();
-        }
-    }
+    function displayRecentPosts(posts) {
+        const container = document.getElementById('recentPosts');
+        if (!container) return;
 
-    function updateUIForLoggedInUser(user) {
-        const logoutLink = document.getElementById('logoutLink');
-        if (logoutLink) {
-            logoutLink.addEventListener('click', logout);
-        }
-    }
-
-    function updateUIForLoggedOutUser() {
-        // Redirect to login if trying to access protected pages
-        if (window.location.pathname.includes('newblog')) {
-            window.location.href = '/login';
-        }
+        container.innerHTML = posts.map(post => `
+            <li><a href="#" class="text-decoration-none" onclick="viewPost(${post.id})">${escapeHtml(post.title)}</a></li>
+        `).join('');
     }
 
     async function logout() {
         try {
-            await fetch('/api/logout', { method: 'POST' });
-            window.location.reload();
+            const response = await fetch('/api/logout', { method: 'POST' });
+            if (response.ok) {
+                currentUser = null;
+                showLoginMenu();
+                loadPosts(); // Reload posts to update edit/delete buttons
+                window.location.href = '/';
+            } else {
+                alert('Error logging out');
+            }
         } catch (error) {
             console.error('Error logging out:', error);
+            alert('Error logging out');
         }
     }
 
-    // Initialize
-    fetchPosts();
-    checkAuth();
+    // Global functions for onclick handlers
+    window.changePage = function(page) {
+        currentPage = page;
+        loadPosts();
+        window.scrollTo(0, 0);
+    };
+
+    window.viewPost = function(postId) {
+        // For now, just scroll to top. In a real app, you'd navigate to a post detail page
+        window.scrollTo(0, 0);
+        alert('Post detail view would be implemented here');
+    };
+
+    window.editPost = function(postId) {
+        // For now, redirect to new blog page. In a real app, you'd have an edit page
+        window.location.href = './html/newblog.html';
+    };
+
+    window.deletePost = async function(postId) {
+        if (confirm('Are you sure you want to delete this post?')) {
+            try {
+                const response = await fetch(`/api/posts/${postId}`, { method: 'DELETE' });
+                if (response.ok) {
+                    loadPosts();
+                } else {
+                    alert('Error deleting post');
+                }
+            } catch (error) {
+                console.error('Error deleting post:', error);
+                alert('Error deleting post');
+            }
+        }
+    };
+
+    // Utility functions
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function truncateText(text, maxLength) {
+        if (text.length <= maxLength) return text;
+        return text.substr(0, maxLength) + '...';
+    }
 });
