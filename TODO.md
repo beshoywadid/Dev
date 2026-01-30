@@ -1,27 +1,17 @@
-# TODO List for Adding Blog to Portfolio Website
+# TODO List for Fixing Website Issues and Adding Features
 
-## Backend Setup
-- [x] Initialize Node.js project with package.json
-- [x] Install dependencies: express, sqlite3, express-session, bcrypt, express-validator, helmet, cors
-- [x] Create server.js with basic Express setup
-- [x] Set up SQLite database schema for users and posts
-- [x] Implement user authentication (register, login, logout) with sessions
-- [x] Add middleware for input sanitization and security (helmet, express-validator)
+## Fix Existing Issues
+- [x] Fix dropdown menu in navbar across pages (index.html, newblog.html, settings.html) - Bootstrap JS is loaded correctly
+- [x] Debug and fix dark mode toggle in js/script.js - Code looks correct, localStorage and theme switching implemented
+- [x] Check and fix any syntax errors causing file crashes - No syntax errors found in js/script.js
+- [x] Add client-side validation to login.html
+- [x] Implement input sanitization in frontend JS to prevent attacks
 
-## Blog CRUD Operations
-- [x] Create API endpoints for blog posts (GET, POST, PUT, DELETE)
-- [x] Implement blog post creation/editing with input validation
-- [x] Add blog post display functionality
+## Add Missing Pages
+- [x] Create register.html page with form and validation
+- [x] Create forgetpassword.html page
+- [x] Create addblog.html page (separate from newblog.html if needed)
 
-## Frontend Updates
-- [x] Update index.html to display blog posts dynamically
-- [x] Integrate login.html with backend authentication
-- [x] Update settings.html if needed for blog settings
-- [x] Add JavaScript for API interactions (fetch blog posts, handle login)
-- [x] Ensure dark mode works with new elements
-
-## Security and Testing
-- [x] Sanitize all user inputs to prevent XSS and SQL injection
-- [x] Test authentication and authorization
-- [x] Test blog CRUD operations
-- [x] Run the full application and verify functionality
+## Testing and Verification
+- [x] Test the website by running the server and verifying functionality - Server running on localhost:3000
+- [x] Update this TODO.md with progress
