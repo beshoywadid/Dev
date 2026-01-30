@@ -42,15 +42,18 @@
                         <form id="registerForm">
                             <div class="mb-3">
                                 <label for="regUsername" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="regUsername" placeholder="Username" required>
+                                <input type="text" class="form-control" id="regUsername" placeholder="Username" required minlength="3" maxlength="20" pattern="[a-zA-Z0-9_]+" title="Username must be 3-20 characters, letters, numbers, and underscores only">
+                                <div class="invalid-feedback">Username must be 3-20 characters, letters, numbers, and underscores only.</div>
                             </div>
                             <div class="mb-3">
                                 <label for="regEmail" class="form-label">Email address</label>
-                                <input type="email" class="form-control" id="regEmail" placeholder="Email" required>
+                                <input type="email" class="form-control" id="regEmail" placeholder="Email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Please enter a valid email address">
+                                <div class="invalid-feedback">Please enter a valid email address.</div>
                             </div>
                             <div class="mb-3">
                                 <label for="regPassword" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="regPassword" placeholder="Password" required>
+                                <input type="password" class="form-control" id="regPassword" placeholder="Password" required minlength="8" title="Password must be at least 8 characters long">
+                                <div class="invalid-feedback">Password must be at least 8 characters long.</div>
                             </div>
                             <button type="submit" class="btn btn-success w-100">Register</button>
                         </form>
